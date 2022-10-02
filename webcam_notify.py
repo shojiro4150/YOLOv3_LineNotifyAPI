@@ -1,7 +1,12 @@
 import argparse
+from inspect import FrameInfo
 import tensorflow as tf
 import cv2
 import sys
+import datetime
+import time
+import requests
+import os
 
 from core.utils import load_class_names, load_image, draw_boxes, draw_boxes_frame
 from core.yolo_tiny import YOLOv3_tiny
@@ -64,9 +69,28 @@ def main(mode, tiny, iou_threshold, confidence_threshold, path):
         #resized_frame = cv2.resize(frame, dsize=tuple((x) for x in model.input_size[::-1]), interpolation=cv2.INTER_NEAREST)
         resized_frame = cv2.resize(frame, dsize=(416,416), interpolation=cv2.INTER_NEAREST)
         result = sess.run(detections, feed_dict={inputs: [resized_frame]})
-        result = sess.run(detections, feed_dict={inputs: [resized_frame]})
         draw_boxes_frame(frame, frame_size, result, class_names, model.input_size)
-        cv2.imshow('frame', frame)
+        
+        #画像表示
+        #cv2.imshow('frame', frame)
+        
+        #notify & send a picture
+        if len(result[0][0])!=0:
+          #カメラ画像を保存する
+          cv2.imwrite('image.jpg', frame)
+          
+          url = "https://notify-api.line.me/api/notify" 
+          token = "your token"
+          headers = {"Authorization" : "Bearer "+ token}
+          files = {'imageFile': open("image.jpg", "rb")}
+          message =  ("人間いた！")
+          payload = {"message" :  message} 
+          r = requests.post(url, headers = headers, params=payload, files=files)
+
+          #送信間隔
+          time.sleep(20)
+          
+        #quit command
         if cv2.waitKey(1) & 0xFF == ord('q'):
           break
       cap.release()

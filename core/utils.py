@@ -26,9 +26,9 @@ def draw_boxes(img_name, boxes_dict, class_names, input_size):
   font = ImageFont.truetype(font="./data/Roboto-Black.ttf", size=(img.size[0] + img.size[1]) // 100)
   resize_factor = (img.size[0] / input_size[0], img.size[1] / input_size[1])
 
-  for cls in range(len(class_names)):
+  #for cls in range(len(class_names)):
+  for cls in range(1):
     boxes = boxes_dict[cls]
-
     if np.size(boxes) != 0:
       for box in boxes:
         xy, confidence = box[:4], box[4]
@@ -61,7 +61,8 @@ def draw_boxes_frame(frame, frame_size, boxes_dicts, class_names, input_size):
   """Draws detected boxes in a video frame"""
   boxes_dict = boxes_dicts[0]
   resize_factor = (frame_size[0] / input_size[1], frame_size[1] / input_size[0])
-  for cls in range(len(class_names)):
+  #for cls in range(len(class_names)):
+  for cls in range(1):
     boxes = boxes_dict[cls]
     color = (0, 0, 255)
     if np.size(boxes) != 0:
